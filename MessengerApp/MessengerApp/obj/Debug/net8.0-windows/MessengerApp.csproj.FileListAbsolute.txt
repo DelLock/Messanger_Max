@@ -1,0 +1,16 @@
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\bin\Debug\net8.0-windows\MessengerApp.exe
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\bin\Debug\net8.0-windows\MessengerApp.deps.json
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\bin\Debug\net8.0-windows\MessengerApp.runtimeconfig.json
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\bin\Debug\net8.0-windows\MessengerApp.dll
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\bin\Debug\net8.0-windows\MessengerApp.pdb
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.MainForm.resources
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.csproj.GenerateResource.cache
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.AssemblyInfoInputs.cache
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.AssemblyInfo.cs
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.csproj.CoreCompileInputs.cache
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.dll
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\refint\MessengerApp.dll
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.pdb
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\MessengerApp.genruntimeconfig.cache
+C:\Users\Denis\source\repos\MessengerApp\MessengerApp\obj\Debug\net8.0-windows\ref\MessengerApp.dll
