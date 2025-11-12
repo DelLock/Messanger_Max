@@ -1,3 +1,4 @@
+﻿
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
@@ -28,6 +29,37 @@ namespace MessengerApp
         {
             connectedUsers.Remove(username);
             userEndpoints.Remove(username);
+        }
+
+        // Новый метод для смены имени пользователя
+        public bool RenameUser(string oldUsername, string newUsername, IPEndPoint endpoint = null)
+        {
+            if (string.IsNullOrEmpty(newUsername) || newUsername == oldUsername)
+                return false;
+
+            // Проверяем, не занято ли новое имя (если это не тот же пользователь)
+            if (connectedUsers.Contains(newUsername) && newUsername != oldUsername)
+                return false;
+
+            if (connectedUsers.Contains(oldUsername))
+            {
+                connectedUsers.Remove(oldUsername);
+                connectedUsers.Add(newUsername);
+
+                if (userEndpoints.ContainsKey(oldUsername))
+                {
+                    var oldEndpoint = userEndpoints[oldUsername];
+                    userEndpoints.Remove(oldUsername);
+                    userEndpoints[newUsername] = endpoint ?? oldEndpoint;
+                }
+                else if (endpoint != null)
+                {
+                    userEndpoints[newUsername] = endpoint;
+                }
+
+                return true;
+            }
+            return false;
         }
 
         public List<string> GetConnectedUsers()

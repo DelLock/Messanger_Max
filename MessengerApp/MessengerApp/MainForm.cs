@@ -1,3 +1,4 @@
+﻿
 ﻿using System;
 using System.Drawing;
 using System.IO;
@@ -29,10 +30,16 @@ namespace MessengerApp
         private string currentUser;
         private bool isFormReady = false;
 
+        // Словарь для хранения соответствия TCP-клиентов и их имен пользователей
+        private Dictionary<TcpClient, string> clientUsernames = new Dictionary<TcpClient, string>();
+
         public MainForm()
         {
             InitializeComponent();
-            currentUser = "User_" + new Random().Next(1000, 9999);
+
+            // Показываем диалог ввода имени при запуске
+            ShowUsernameDialog();
+
             Text = $"Messenger - {currentUser}";
 
             // Ждем полной загрузки формы перед вызовами Invoke
@@ -47,6 +54,107 @@ namespace MessengerApp
 
             // Также обрабатываем изменение размера окна
             this.Resize += (s, e) => AdjustLayout();
+        }
+
+        // Метод для показа диалога ввода имени пользователя
+        private void ShowUsernameDialog()
+        {
+            using (var dialog = new Form())
+            {
+                dialog.Text = "Введите ваш никнейм";
+                dialog.Width = 300;
+                dialog.Height = 150;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.StartPosition = FormStartPosition.CenterScreen;
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
+
+                var label = new Label() { Left = 20, Top = 20, Text = "Никнейм:", Width = 100 };
+                var textBox = new TextBox() { Left = 20, Top = 45, Width = 240, Text = "User_" + new Random().Next(1000, 9999) };
+                var button = new Button() { Text = "OK", Left = 160, Top = 75, Width = 100, DialogResult = DialogResult.OK };
+
+                button.Click += (sender, e) => { dialog.Close(); };
+
+                dialog.Controls.Add(label);
+                dialog.Controls.Add(textBox);
+                dialog.Controls.Add(button);
+                dialog.AcceptButton = button;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    currentUser = string.IsNullOrWhiteSpace(textBox.Text) ?
+                        "User_" + new Random().Next(1000, 9999) : textBox.Text.Trim();
+                }
+                else
+                {
+                    currentUser = "User_" + new Random().Next(1000, 9999);
+                }
+            }
+        }
+
+        // Метод для смены никнейма
+        private void ChangeUsername(string newUsername)
+        {
+            if (string.IsNullOrWhiteSpace(newUsername))
+            {
+                MessageBox.Show("Никнейм не может быть пустым!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string oldUsername = currentUser;
+            currentUser = newUsername.Trim();
+            Text = $"Messenger - {currentUser}";
+
+            // Обновляем список пользователей
+            UpdateUserList();
+
+            // Отправляем сообщение о смене имени другим пользователям
+            var renameMessage = new ChatMessage
+            {
+                Sender = oldUsername,
+                Type = MessageType.UserRename,
+                OldUsername = oldUsername,
+                NewUsername = currentUser,
+                Text = $"{oldUsername} сменил имя на {currentUser}"
+            };
+
+            SendMessageToAll(renameMessage);
+            AddSystemMessage($"Вы сменили имя на {currentUser}");
+        }
+
+        // Обработчик кнопки смены никнейма
+        private void changeNameButton_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new Form())
+            {
+                dialog.Text = "Сменить никнейм";
+                dialog.Width = 300;
+                dialog.Height = 150;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
+
+                var label = new Label() { Left = 20, Top = 20, Text = "Новый никнейм:", Width = 100 };
+                var textBox = new TextBox() { Left = 20, Top = 45, Width = 240, Text = currentUser };
+                var okButton = new Button() { Text = "OK", Left = 160, Top = 75, Width = 60, DialogResult = DialogResult.OK };
+                var cancelButton = new Button() { Text = "Отмена", Left = 85, Top = 75, Width = 60, DialogResult = DialogResult.Cancel };
+
+                okButton.Click += (s, e) => { dialog.Close(); };
+                cancelButton.Click += (s, e) => { dialog.Close(); };
+
+                dialog.Controls.Add(label);
+                dialog.Controls.Add(textBox);
+                dialog.Controls.Add(okButton);
+                dialog.Controls.Add(cancelButton);
+                dialog.AcceptButton = okButton;
+                dialog.CancelButton = cancelButton;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    ChangeUsername(textBox.Text);
+                }
+            }
         }
 
         // === БЕЗОПАСНЫЕ ВЫЗОВЫ ДЛЯ UI ===
@@ -229,6 +337,7 @@ namespace MessengerApp
                     try { client.Close(); } catch { }
                 }
                 connectedClients.Clear();
+                clientUsernames.Clear();
             }
 
             try { server?.Stop(); } catch { }
@@ -283,6 +392,12 @@ namespace MessengerApp
                 var userMessage = JsonSerializer.Deserialize<ChatMessage>(userInfo);
                 clientUser = userMessage.Sender;
 
+                // Сохраняем имя пользователя для этого клиента
+                lock (clientUsernames)
+                {
+                    clientUsernames[tcpClient] = clientUser;
+                }
+
                 AddSystemMessage($"{clientUser} подключился");
 
                 // Отправляем текущему спискок пользователей
@@ -298,7 +413,7 @@ namespace MessengerApp
                     if (bytesRead == 0) break;
 
                     string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    ProcessReceivedMessage(message);
+                    ProcessReceivedMessage(message, tcpClient);
                 }
             }
             catch (Exception ex)
@@ -310,6 +425,10 @@ namespace MessengerApp
                 lock (connectedClients)
                 {
                     connectedClients.Remove(tcpClient);
+                }
+                lock (clientUsernames)
+                {
+                    clientUsernames.Remove(tcpClient);
                 }
                 try { tcpClient.Close(); } catch { }
 
@@ -328,8 +447,7 @@ namespace MessengerApp
                 var userList = new List<string> { currentUser };
                 lock (connectedClients)
                 {
-                    userList.AddRange(connectedClients.Count > 0 ?
-                        new List<string> { "Другой пользователь" } : new List<string>());
+                    userList.AddRange(GetConnectedUsernames());
                 }
 
                 var userListMessage = new ChatMessage
@@ -344,6 +462,17 @@ namespace MessengerApp
             {
                 AddSystemMessage($"Ошибка отправки списка пользователей: {ex.Message}");
             }
+        }
+
+        // Получение списка имен подключенных пользователей
+        private List<string> GetConnectedUsernames()
+        {
+            var usernames = new List<string>();
+            lock (clientUsernames)
+            {
+                usernames.AddRange(clientUsernames.Values);
+            }
+            return usernames;
         }
 
         private void BroadcastUserJoin(string username)
@@ -481,7 +610,7 @@ namespace MessengerApp
             DisconnectFromServer();
         }
 
-        private void ProcessReceivedMessage(string message)
+        private void ProcessReceivedMessage(string message, TcpClient sourceClient = null)
         {
             try
             {
@@ -504,12 +633,47 @@ namespace MessengerApp
                     case MessageType.UserConnect:
                         AddSystemMessage($"{chatMessage.Sender} подключился к чату");
                         break;
+                    case MessageType.UserRename:
+                        // Обработка смены имени пользователя
+                        if (sourceClient != null)
+                        {
+                            // Сервер: обновляем имя в словаре и рассылаем уведомление
+                            lock (clientUsernames)
+                            {
+                                if (clientUsernames.ContainsKey(sourceClient))
+                                {
+                                    clientUsernames[sourceClient] = chatMessage.NewUsername;
+                                }
+                            }
+
+                            // Рассылаем обновленный список пользователей
+                            BroadcastUserList();
+                        }
+
+                        // Все клиенты: показываем системное сообщение о смене имени
+                        AddSystemMessage($"{chatMessage.OldUsername} сменил имя на {chatMessage.NewUsername}");
+                        break;
                 }
             }
             catch (Exception ex)
             {
                 AddSystemMessage($"Ошибка обработки сообщения: {ex.Message}");
             }
+        }
+
+        // Рассылка обновленного списка пользователей всем клиентам
+        private void BroadcastUserList()
+        {
+            var userList = new List<string> { currentUser };
+            userList.AddRange(GetConnectedUsernames());
+
+            var userListMessage = new ChatMessage
+            {
+                Type = MessageType.UserList,
+                UserList = userList
+            };
+
+            BroadcastMessage(userListMessage);
         }
 
         private void AddImageMessage(string sender, byte[] imageData)
