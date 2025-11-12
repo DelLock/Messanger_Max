@@ -15,13 +15,11 @@ namespace MessengerApp
 {
     public partial class MainForm : Form
     {
-        // Серверные компоненты
         private TcpListener server;
         private Thread serverThread;
         private bool isServerRunning = false;
         private List<TcpClient> connectedClients = new List<TcpClient>();
 
-        // Клиентские компоненты  
         private TcpClient client;
         private NetworkStream clientStream;
         private Thread clientThread;
@@ -30,33 +28,26 @@ namespace MessengerApp
         private string currentUser;
         private bool isFormReady = false;
 
-        // Словарь для хранения соответствия TCP-клиентов и их имен пользователей
         private Dictionary<TcpClient, string> clientUsernames = new Dictionary<TcpClient, string>();
 
         public MainForm()
         {
             InitializeComponent();
 
-            // Показываем диалог ввода имени при запуске
             ShowUsernameDialog();
 
             Text = $"Messenger - {currentUser}";
 
-            // Ждем полной загрузки формы перед вызовами Invoke
             this.Load += (s, e) => {
                 isFormReady = true;
                 UpdateStatus("Не подключено");
                 serverInfoLabel.Text = "Ваш IP: " + GetLocalIPAddress();
 
-                // Автоматически подстраиваем размеры после загрузки
                 AdjustLayout();
             };
 
-            // Также обрабатываем изменение размера окна
             this.Resize += (s, e) => AdjustLayout();
         }
-
-        // Метод для показа диалога ввода имени пользователя
         private void ShowUsernameDialog()
         {
             using (var dialog = new Form())
@@ -91,8 +82,6 @@ namespace MessengerApp
                 }
             }
         }
-
-        // Метод для смены никнейма
         private void ChangeUsername(string newUsername)
         {
             if (string.IsNullOrWhiteSpace(newUsername))
@@ -105,10 +94,8 @@ namespace MessengerApp
             currentUser = newUsername.Trim();
             Text = $"Messenger - {currentUser}";
 
-            // Обновляем список пользователей
             UpdateUserList();
 
-            // Отправляем сообщение о смене имени другим пользователям
             var renameMessage = new ChatMessage
             {
                 Sender = oldUsername,
@@ -121,8 +108,6 @@ namespace MessengerApp
             SendMessageToAll(renameMessage);
             AddSystemMessage($"Вы сменили имя на {currentUser}");
         }
-
-        // Обработчик кнопки смены никнейма
         private void changeNameButton_Click(object sender, EventArgs e)
         {
             using (var dialog = new Form())
@@ -156,8 +141,6 @@ namespace MessengerApp
                 }
             }
         }
-
-        // === БЕЗОПАСНЫЕ ВЫЗОВЫ ДЛЯ UI ===
         private void SafeInvoke(Action action)
         {
             if (IsDisposed || !isFormReady) return;
@@ -234,20 +217,16 @@ namespace MessengerApp
                 }
             });
         }
-
-        // === СЕТЕВАЯ ИНФОРМАЦИЯ ===
         private string GetNetworkInfo()
         {
             string result = "Сетевые интерфейсы:\n";
 
             try
             {
-                // Получаем все сетевые интерфейсы
                 NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
 
                 foreach (NetworkInterface ni in interfaces)
                 {
-                    // Показываем только активные Ethernet/Wi-Fi интерфейсы
                     if (ni.OperationalStatus == OperationalStatus.Up &&
                         (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
                          ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet))
@@ -288,17 +267,14 @@ namespace MessengerApp
             }
             catch (Exception)
             {
-                // Игнорируем ошибки получения IP
             }
             return "127.0.0.1";
         }
 
-        // === СЕРВЕРНАЯ ЧАСТЬ ===
         private void StartServer()
         {
             try
             {
-                // Важно: используем IPAddress.Any для прослушивания всех интерфейсов
                 server = new TcpListener(IPAddress.Any, port);
                 server.Start();
                 isServerRunning = true;
@@ -329,7 +305,6 @@ namespace MessengerApp
         {
             isServerRunning = false;
 
-            // Закрываем всех подключенных клиентов
             lock (connectedClients)
             {
                 foreach (var client in connectedClients.ToList())
@@ -385,14 +360,12 @@ namespace MessengerApp
             {
                 NetworkStream clientStream = tcpClient.GetStream();
 
-                // Получаем информацию о пользователе
                 byte[] buffer = new byte[4096];
                 int bytesRead = clientStream.Read(buffer, 0, buffer.Length);
                 string userInfo = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
                 var userMessage = JsonSerializer.Deserialize<ChatMessage>(userInfo);
                 clientUser = userMessage.Sender;
 
-                // Сохраняем имя пользователя для этого клиента
                 lock (clientUsernames)
                 {
                     clientUsernames[tcpClient] = clientUser;
@@ -400,13 +373,10 @@ namespace MessengerApp
 
                 AddSystemMessage($"{clientUser} подключился");
 
-                // Отправляем текущему спискок пользователей
                 SendUserList(tcpClient);
 
-                // Уведомляем всех о новом пользователе
                 BroadcastUserJoin(clientUser);
 
-                // Слушаем сообщения от этого клиента
                 while (tcpClient.Connected && isServerRunning)
                 {
                     bytesRead = clientStream.Read(buffer, 0, buffer.Length);
@@ -464,7 +434,6 @@ namespace MessengerApp
             }
         }
 
-        // Получение списка имен подключенных пользователей
         private List<string> GetConnectedUsernames()
         {
             var usernames = new List<string>();
@@ -523,11 +492,9 @@ namespace MessengerApp
             }
             catch (Exception)
             {
-                // Игнорируем ошибки отправки - клиент может быть отключен
             }
         }
 
-        // === КЛИЕНТСКАЯ ЧАСТЬ ===
         private void ConnectToServer(string ipAddress)
         {
             try
@@ -536,7 +503,6 @@ namespace MessengerApp
                 client.Connect(ipAddress, port);
                 clientStream = client.GetStream();
 
-                // Отправляем информацию о себе
                 var connectMessage = new ChatMessage
                 {
                     Sender = currentUser,
@@ -544,7 +510,6 @@ namespace MessengerApp
                 };
                 SendMessageToClient(connectMessage, client);
 
-                // Запускаем поток для прослушивания сообщений
                 clientThread = new Thread(new ThreadStart(ListenToServer));
                 clientThread.IsBackground = true;
                 clientThread.Start();
@@ -634,10 +599,8 @@ namespace MessengerApp
                         AddSystemMessage($"{chatMessage.Sender} подключился к чату");
                         break;
                     case MessageType.UserRename:
-                        // Обработка смены имени пользователя
                         if (sourceClient != null)
                         {
-                            // Сервер: обновляем имя в словаре и рассылаем уведомление
                             lock (clientUsernames)
                             {
                                 if (clientUsernames.ContainsKey(sourceClient))
@@ -646,11 +609,9 @@ namespace MessengerApp
                                 }
                             }
 
-                            // Рассылаем обновленный список пользователей
                             BroadcastUserList();
                         }
 
-                        // Все клиенты: показываем системное сообщение о смене имени
                         AddSystemMessage($"{chatMessage.OldUsername} сменил имя на {chatMessage.NewUsername}");
                         break;
                 }
@@ -661,7 +622,6 @@ namespace MessengerApp
             }
         }
 
-        // Рассылка обновленного списка пользователей всем клиентам
         private void BroadcastUserList()
         {
             var userList = new List<string> { currentUser };
@@ -722,12 +682,10 @@ namespace MessengerApp
         {
             if (isServerRunning)
             {
-                // Мы сервер - рассылаем всем клиентам
                 BroadcastMessage(chatMessage);
             }
             else if (client != null && client.Connected)
             {
-                // Мы клиент - отправляем только серверу
                 SendMessageToClient(chatMessage, client);
             }
             else
@@ -742,13 +700,11 @@ namespace MessengerApp
 
             SafeInvoke(() =>
             {
-                // Подстраиваем ширину правой панели
                 int rightPanelWidth = Math.Max(250, this.Width / 4);
                 splitContainer1.SplitterDistance = this.Width - rightPanelWidth - splitContainer1.SplitterWidth;
             });
         }
 
-        // === ОБРАБОТЧИКИ СОБЫТИЙ ===
         private void sendButton_Click(object sender, EventArgs e)
         {
             SendMessage();
@@ -758,7 +714,6 @@ namespace MessengerApp
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
-                // Проверяем нажатие Shift через Control.ModifierKeys
                 if ((Control.ModifierKeys & Keys.Shift) != Keys.Shift)
                 {
                     SendMessage();
@@ -840,7 +795,7 @@ namespace MessengerApp
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            isFormReady = false; // Предотвращаем дальнейшие вызовы Invoke
+            isFormReady = false;
             StopServer();
             DisconnectFromServer();
             base.OnFormClosing(e);

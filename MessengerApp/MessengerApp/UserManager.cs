@@ -30,14 +30,11 @@ namespace MessengerApp
             connectedUsers.Remove(username);
             userEndpoints.Remove(username);
         }
-
-        // Новый метод для смены имени пользователя
         public bool RenameUser(string oldUsername, string newUsername, IPEndPoint endpoint = null)
         {
             if (string.IsNullOrEmpty(newUsername) || newUsername == oldUsername)
                 return false;
 
-            // Проверяем, не занято ли новое имя (если это не тот же пользователь)
             if (connectedUsers.Contains(newUsername) && newUsername != oldUsername)
                 return false;
 

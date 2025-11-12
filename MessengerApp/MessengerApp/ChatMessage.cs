@@ -12,7 +12,7 @@ namespace MessengerApp
         UserList,
         UserConnect,
         System,
-        UserRename // Новый тип сообщения для смены ника
+        UserRename
     }
 
     public class ChatMessage
@@ -28,7 +28,6 @@ namespace MessengerApp
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<string> UserList { get; set; }
 
-        // Новые свойства для смены никнейма
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string OldUsername { get; set; }
 
