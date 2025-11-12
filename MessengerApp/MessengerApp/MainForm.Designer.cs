@@ -81,165 +81,193 @@
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.BackColor = Color.White;
             splitContainer1.Panel1.Controls.Add(chatPanel);
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.BackColor = Color.FromArgb(240, 242, 245);
             splitContainer1.Panel2.Controls.Add(rightPanel);
-            splitContainer1.Size = new Size(984, 661);
-            splitContainer1.SplitterDistance = 954;
-            splitContainer1.SplitterWidth = 5;
+            splitContainer1.Size = new Size(1000, 700);
+            splitContainer1.SplitterDistance = 750;
+            splitContainer1.SplitterWidth = 1;
             splitContainer1.TabIndex = 0;
             // 
             // chatPanel
             // 
+            chatPanel.BackColor = Color.White;
             chatPanel.Controls.Add(chatTextBox);
             chatPanel.Controls.Add(bottomPanel);
             chatPanel.Dock = DockStyle.Fill;
             chatPanel.Location = new Point(0, 0);
             chatPanel.Name = "chatPanel";
-            chatPanel.Size = new Size(954, 661);
+            chatPanel.Size = new Size(750, 700);
             chatPanel.TabIndex = 0;
             // 
             // chatTextBox
             // 
-            chatTextBox.BorderStyle = BorderStyle.FixedSingle;
+            chatTextBox.BackColor = Color.White;
+            chatTextBox.BorderStyle = BorderStyle.None;
             chatTextBox.Dock = DockStyle.Fill;
             chatTextBox.Font = new Font("Segoe UI", 10F);
+            chatTextBox.ForeColor = Color.FromArgb(32, 32, 32);
             chatTextBox.Location = new Point(0, 0);
             chatTextBox.Name = "chatTextBox";
             chatTextBox.ReadOnly = true;
             chatTextBox.ScrollBars = RichTextBoxScrollBars.Vertical;
-            chatTextBox.Size = new Size(954, 611);
+            chatTextBox.Size = new Size(750, 650);
             chatTextBox.TabIndex = 0;
             chatTextBox.Text = "";
             // 
             // bottomPanel
             // 
+            bottomPanel.BackColor = Color.FromArgb(240, 242, 245);
             bottomPanel.Controls.Add(bottomTableLayout);
             bottomPanel.Dock = DockStyle.Bottom;
-            bottomPanel.Location = new Point(0, 611);
+            bottomPanel.Location = new Point(0, 650);
             bottomPanel.Name = "bottomPanel";
-            bottomPanel.Padding = new Padding(5);
-            bottomPanel.Size = new Size(954, 50);
+            bottomPanel.Padding = new Padding(10);
+            bottomPanel.Size = new Size(750, 50);
             bottomPanel.TabIndex = 1;
             // 
             // bottomTableLayout
             // 
-            bottomTableLayout.ColumnCount = 6;
+            bottomTableLayout.ColumnCount = 4;
             bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 45F));
+            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 45F));
+            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
             bottomTableLayout.Controls.Add(messageTextBox, 0, 0);
             bottomTableLayout.Controls.Add(emojiButton, 1, 0);
             bottomTableLayout.Controls.Add(imageButton, 2, 0);
             bottomTableLayout.Controls.Add(sendButton, 3, 0);
             bottomTableLayout.Dock = DockStyle.Fill;
-            bottomTableLayout.Location = new Point(5, 5);
+            bottomTableLayout.Location = new Point(10, 10);
             bottomTableLayout.Name = "bottomTableLayout";
             bottomTableLayout.RowCount = 1;
             bottomTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            bottomTableLayout.Size = new Size(944, 40);
+            bottomTableLayout.Size = new Size(730, 30);
             bottomTableLayout.TabIndex = 0;
             // 
             // messageTextBox
             // 
             messageTextBox.AcceptsReturn = true;
+            messageTextBox.BackColor = Color.White;
+            messageTextBox.BorderStyle = BorderStyle.FixedSingle;
             messageTextBox.Dock = DockStyle.Fill;
             messageTextBox.Font = new Font("Segoe UI", 10F);
             messageTextBox.Location = new Point(3, 3);
             messageTextBox.Multiline = true;
             messageTextBox.Name = "messageTextBox";
-            messageTextBox.Size = new Size(738, 34);
+            messageTextBox.PlaceholderText = "Введите сообщение...";
+            messageTextBox.Size = new Size(479, 24);
             messageTextBox.TabIndex = 0;
             messageTextBox.KeyPress += messageTextBox_KeyPress;
             // 
             // emojiButton
             // 
+            emojiButton.BackColor = Color.FromArgb(0, 123, 255);
             emojiButton.Dock = DockStyle.Fill;
-            emojiButton.Font = new Font("Segoe UI", 12F);
-            emojiButton.Location = new Point(746, 2);
-            emojiButton.Margin = new Padding(2);
+            emojiButton.FlatAppearance.BorderSize = 0;
+            emojiButton.FlatStyle = FlatStyle.Flat;
+            emojiButton.Font = new Font("Segoe UI Emoji", 10F);
+            emojiButton.ForeColor = Color.White;
+            emojiButton.Location = new Point(485, 2);
+            emojiButton.Margin = new Padding(0, 2, 5, 2);
             emojiButton.Name = "emojiButton";
-            emojiButton.Size = new Size(36, 36);
+            emojiButton.Size = new Size(40, 26);
             emojiButton.TabIndex = 1;
             emojiButton.Text = "😊";
+            emojiButton.UseVisualStyleBackColor = false;
             emojiButton.Click += emojiButton_Click;
             // 
             // imageButton
             // 
+            imageButton.BackColor = Color.FromArgb(0, 123, 255);
             imageButton.Dock = DockStyle.Fill;
-            imageButton.Font = new Font("Segoe UI", 12F);
-            imageButton.Location = new Point(786, 2);
-            imageButton.Margin = new Padding(2);
+            imageButton.FlatAppearance.BorderSize = 0;
+            imageButton.FlatStyle = FlatStyle.Flat;
+            imageButton.Font = new Font("Segoe UI", 10F);
+            imageButton.ForeColor = Color.White;
+            imageButton.Location = new Point(530, 2);
+            imageButton.Margin = new Padding(0, 2, 5, 2);
             imageButton.Name = "imageButton";
-            imageButton.Size = new Size(36, 36);
+            imageButton.Size = new Size(40, 26);
             imageButton.TabIndex = 2;
             imageButton.Text = "📷";
+            imageButton.UseVisualStyleBackColor = false;
             imageButton.Click += imageButton_Click;
             // 
             // sendButton
             // 
+            sendButton.BackColor = Color.FromArgb(0, 123, 255);
             sendButton.Dock = DockStyle.Fill;
-            sendButton.Font = new Font("Segoe UI", 9F);
-            sendButton.Location = new Point(826, 2);
-            sendButton.Margin = new Padding(2);
+            sendButton.FlatAppearance.BorderSize = 0;
+            sendButton.FlatStyle = FlatStyle.Flat;
+            sendButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            sendButton.ForeColor = Color.White;
+            sendButton.Location = new Point(575, 2);
+            sendButton.Margin = new Padding(0, 2, 0, 2);
             sendButton.Name = "sendButton";
-            sendButton.Size = new Size(76, 36);
+            sendButton.Size = new Size(100, 26);
             sendButton.TabIndex = 3;
             sendButton.Text = "Отправить";
+            sendButton.UseVisualStyleBackColor = false;
             sendButton.Click += sendButton_Click;
             // 
             // rightPanel
             // 
+            rightPanel.BackColor = Color.FromArgb(240, 242, 245);
             rightPanel.Controls.Add(userListPanel);
             rightPanel.Controls.Add(clientPanel);
             rightPanel.Controls.Add(serverPanel);
             rightPanel.Dock = DockStyle.Fill;
             rightPanel.Location = new Point(0, 0);
             rightPanel.Name = "rightPanel";
-            rightPanel.Padding = new Padding(5);
-            rightPanel.Size = new Size(25, 661);
+            rightPanel.Padding = new Padding(10);
+            rightPanel.Size = new Size(249, 700);
             rightPanel.TabIndex = 0;
             // 
             // userListPanel
             // 
+            userListPanel.BackColor = Color.White;
             userListPanel.BorderStyle = BorderStyle.FixedSingle;
             userListPanel.Controls.Add(userListBox);
             userListPanel.Controls.Add(usersLabel);
             userListPanel.Dock = DockStyle.Fill;
-            userListPanel.Location = new Point(5, 245);
+            userListPanel.Location = new Point(10, 260);
             userListPanel.Name = "userListPanel";
-            userListPanel.Padding = new Padding(5);
-            userListPanel.Size = new Size(15, 411);
+            userListPanel.Padding = new Padding(8);
+            userListPanel.Size = new Size(229, 430);
             userListPanel.TabIndex = 0;
             // 
             // userListBox
             // 
+            userListBox.BackColor = Color.White;
             userListBox.BorderStyle = BorderStyle.None;
             userListBox.Dock = DockStyle.Fill;
             userListBox.Font = new Font("Segoe UI", 9F);
+            userListBox.ForeColor = Color.FromArgb(32, 32, 32);
             userListBox.ItemHeight = 15;
-            userListBox.Location = new Point(5, 25);
+            userListBox.Location = new Point(8, 30);
             userListBox.Name = "userListBox";
-            userListBox.Size = new Size(3, 379);
+            userListBox.Size = new Size(211, 390);
             userListBox.TabIndex = 0;
             // 
             // usersLabel
             // 
             usersLabel.Dock = DockStyle.Top;
-            usersLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            usersLabel.Location = new Point(5, 5);
+            usersLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            usersLabel.ForeColor = Color.FromArgb(32, 32, 32);
+            usersLabel.Location = new Point(8, 8);
             usersLabel.Name = "usersLabel";
-            usersLabel.Size = new Size(3, 20);
+            usersLabel.Size = new Size(211, 22);
             usersLabel.TabIndex = 1;
             usersLabel.Text = "Пользователи онлайн:";
             // 
             // clientPanel
             // 
+            clientPanel.BackColor = Color.White;
             clientPanel.BorderStyle = BorderStyle.FixedSingle;
             clientPanel.Controls.Add(clientLabel);
             clientPanel.Controls.Add(ipLabel);
@@ -248,25 +276,27 @@
             clientPanel.Controls.Add(disconnectButton);
             clientPanel.Controls.Add(statusLabel);
             clientPanel.Dock = DockStyle.Top;
-            clientPanel.Location = new Point(5, 125);
+            clientPanel.Location = new Point(10, 130);
             clientPanel.Name = "clientPanel";
-            clientPanel.Padding = new Padding(5);
-            clientPanel.Size = new Size(15, 120);
+            clientPanel.Padding = new Padding(8);
+            clientPanel.Size = new Size(229, 130);
             clientPanel.TabIndex = 1;
             // 
             // clientLabel
             // 
-            clientLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            clientLabel.Location = new Point(5, 5);
+            clientLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            clientLabel.ForeColor = Color.FromArgb(32, 32, 32);
+            clientLabel.Location = new Point(8, 8);
             clientLabel.Name = "clientLabel";
-            clientLabel.Size = new Size(150, 20);
+            clientLabel.Size = new Size(200, 20);
             clientLabel.TabIndex = 0;
             clientLabel.Text = "Подключение к серверу:";
             // 
             // ipLabel
             // 
-            ipLabel.Font = new Font("Segoe UI", 8F);
-            ipLabel.Location = new Point(5, 30);
+            ipLabel.Font = new Font("Segoe UI", 9F);
+            ipLabel.ForeColor = Color.FromArgb(64, 64, 64);
+            ipLabel.Location = new Point(8, 35);
             ipLabel.Name = "ipLabel";
             ipLabel.Size = new Size(70, 20);
             ipLabel.TabIndex = 1;
@@ -274,39 +304,52 @@
             // 
             // ipTextBox
             // 
-            ipTextBox.Font = new Font("Segoe UI", 8F);
-            ipTextBox.Location = new Point(80, 28);
+            ipTextBox.BackColor = Color.White;
+            ipTextBox.BorderStyle = BorderStyle.FixedSingle;
+            ipTextBox.Font = new Font("Segoe UI", 9F);
+            ipTextBox.ForeColor = Color.FromArgb(32, 32, 32);
+            ipTextBox.Location = new Point(80, 33);
             ipTextBox.Name = "ipTextBox";
-            ipTextBox.Size = new Size(100, 22);
+            ipTextBox.Size = new Size(135, 23);
             ipTextBox.TabIndex = 2;
             ipTextBox.Text = "127.0.0.1";
             // 
             // connectButton
             // 
-            connectButton.Font = new Font("Segoe UI", 8F);
-            connectButton.Location = new Point(185, 27);
+            connectButton.BackColor = Color.FromArgb(76, 175, 80);
+            connectButton.FlatAppearance.BorderSize = 0;
+            connectButton.FlatStyle = FlatStyle.Flat;
+            connectButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            connectButton.ForeColor = Color.White;
+            connectButton.Location = new Point(8, 65);
             connectButton.Name = "connectButton";
-            connectButton.Size = new Size(80, 25);
+            connectButton.Size = new Size(100, 25);
             connectButton.TabIndex = 3;
             connectButton.Text = "Подключиться";
+            connectButton.UseVisualStyleBackColor = false;
             connectButton.Click += connectButton_Click;
             // 
             // disconnectButton
             // 
+            disconnectButton.BackColor = Color.FromArgb(244, 67, 54);
             disconnectButton.Enabled = false;
-            disconnectButton.Font = new Font("Segoe UI", 8F);
-            disconnectButton.Location = new Point(270, 27);
+            disconnectButton.FlatAppearance.BorderSize = 0;
+            disconnectButton.FlatStyle = FlatStyle.Flat;
+            disconnectButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            disconnectButton.ForeColor = Color.White;
+            disconnectButton.Location = new Point(115, 65);
             disconnectButton.Name = "disconnectButton";
-            disconnectButton.Size = new Size(80, 25);
+            disconnectButton.Size = new Size(100, 25);
             disconnectButton.TabIndex = 4;
             disconnectButton.Text = "Отключиться";
+            disconnectButton.UseVisualStyleBackColor = false;
             disconnectButton.Click += disconnectButton_Click;
             // 
             // statusLabel
             // 
             statusLabel.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             statusLabel.ForeColor = Color.Red;
-            statusLabel.Location = new Point(5, 60);
+            statusLabel.Location = new Point(8, 100);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(200, 20);
             statusLabel.TabIndex = 5;
@@ -314,22 +357,24 @@
             // 
             // serverPanel
             // 
+            serverPanel.BackColor = Color.White;
             serverPanel.BorderStyle = BorderStyle.FixedSingle;
             serverPanel.Controls.Add(serverLabel);
             serverPanel.Controls.Add(startServerButton);
             serverPanel.Controls.Add(stopServerButton);
             serverPanel.Controls.Add(serverInfoLabel);
             serverPanel.Dock = DockStyle.Top;
-            serverPanel.Location = new Point(5, 5);
+            serverPanel.Location = new Point(10, 10);
             serverPanel.Name = "serverPanel";
-            serverPanel.Padding = new Padding(5);
-            serverPanel.Size = new Size(15, 120);
+            serverPanel.Padding = new Padding(8);
+            serverPanel.Size = new Size(229, 120);
             serverPanel.TabIndex = 2;
             // 
             // serverLabel
             // 
-            serverLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            serverLabel.Location = new Point(5, 5);
+            serverLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            serverLabel.ForeColor = Color.FromArgb(32, 32, 32);
+            serverLabel.Location = new Point(8, 8);
             serverLabel.Name = "serverLabel";
             serverLabel.Size = new Size(150, 20);
             serverLabel.TabIndex = 0;
@@ -337,37 +382,49 @@
             // 
             // startServerButton
             // 
-            startServerButton.Font = new Font("Segoe UI", 8F);
-            startServerButton.Location = new Point(5, 30);
+            startServerButton.BackColor = Color.FromArgb(0, 123, 255);
+            startServerButton.FlatAppearance.BorderSize = 0;
+            startServerButton.FlatStyle = FlatStyle.Flat;
+            startServerButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            startServerButton.ForeColor = Color.White;
+            startServerButton.Location = new Point(8, 35);
             startServerButton.Name = "startServerButton";
-            startServerButton.Size = new Size(120, 30);
+            startServerButton.Size = new Size(100, 30);
             startServerButton.TabIndex = 1;
             startServerButton.Text = "Запустить сервер";
+            startServerButton.UseVisualStyleBackColor = false;
             startServerButton.Click += startServerButton_Click;
             // 
             // stopServerButton
             // 
+            stopServerButton.BackColor = Color.FromArgb(108, 117, 125);
             stopServerButton.Enabled = false;
-            stopServerButton.Font = new Font("Segoe UI", 8F);
-            stopServerButton.Location = new Point(130, 30);
+            stopServerButton.FlatAppearance.BorderSize = 0;
+            stopServerButton.FlatStyle = FlatStyle.Flat;
+            stopServerButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            stopServerButton.ForeColor = Color.White;
+            stopServerButton.Location = new Point(115, 35);
             stopServerButton.Name = "stopServerButton";
-            stopServerButton.Size = new Size(120, 30);
+            stopServerButton.Size = new Size(100, 30);
             stopServerButton.TabIndex = 2;
             stopServerButton.Text = "Остановить сервер";
+            stopServerButton.UseVisualStyleBackColor = false;
             stopServerButton.Click += stopServerButton_Click;
             // 
             // serverInfoLabel
             // 
             serverInfoLabel.Font = new Font("Segoe UI", 8F);
-            serverInfoLabel.Location = new Point(5, 70);
+            serverInfoLabel.ForeColor = Color.FromArgb(64, 64, 64);
+            serverInfoLabel.Location = new Point(8, 75);
             serverInfoLabel.Name = "serverInfoLabel";
-            serverInfoLabel.Size = new Size(250, 40);
+            serverInfoLabel.Size = new Size(210, 35);
             serverInfoLabel.TabIndex = 3;
             serverInfoLabel.Text = "Ваш IP: загрузка...";
             // 
             // MainForm
             // 
-            ClientSize = new Size(984, 661);
+            BackColor = Color.White;
+            ClientSize = new Size(1000, 700);
             Controls.Add(splitContainer1);
             MinimumSize = new Size(800, 600);
             Name = "MainForm";
