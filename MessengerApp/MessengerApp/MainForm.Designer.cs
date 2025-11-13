@@ -1,5 +1,4 @@
-﻿
-namespace MessengerApp
+﻿namespace MessengerApp
 {
     partial class MainForm
     {
@@ -23,8 +22,14 @@ namespace MessengerApp
         private Panel serverPanel;
         private Panel clientPanel;
         private TableLayoutPanel bottomTableLayout;
-        private Button changeNameButton; // Новая кнопка для смены имени
-        private Panel changeNamePanel; // Новая панель для кнопки смены имени
+        private Button changeNameButton;
+        private Panel changeNamePanel;
+        private Panel userListPanel;
+        private Panel rightPanel;
+        private Panel chatPanel;
+        private Label usersLabel;
+        private Label clientLabel;
+        private Label serverLabel;
 
         protected override void Dispose(bool disposing)
         {
@@ -47,11 +52,11 @@ namespace MessengerApp
             imageButton = new Button();
             sendButton = new Button();
             rightPanel = new Panel();
-            changeNamePanel = new Panel(); // Новая панель
-            changeNameButton = new Button(); // Новая кнопка
             userListPanel = new Panel();
             userListBox = new ListBox();
             usersLabel = new Label();
+            changeNamePanel = new Panel();
+            changeNameButton = new Button();
             clientPanel = new Panel();
             clientLabel = new Label();
             ipLabel = new Label();
@@ -72,8 +77,8 @@ namespace MessengerApp
             bottomPanel.SuspendLayout();
             bottomTableLayout.SuspendLayout();
             rightPanel.SuspendLayout();
-            changeNamePanel.SuspendLayout();
             userListPanel.SuspendLayout();
+            changeNamePanel.SuspendLayout();
             clientPanel.SuspendLayout();
             serverPanel.SuspendLayout();
             SuspendLayout();
@@ -89,13 +94,15 @@ namespace MessengerApp
             // 
             splitContainer1.Panel1.BackColor = Color.White;
             splitContainer1.Panel1.Controls.Add(chatPanel);
+            splitContainer1.Panel1.Padding = new Padding(10);
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.BackColor = Color.FromArgb(240, 242, 245);
+            splitContainer1.Panel2.BackColor = Color.FromArgb(245, 247, 250);
             splitContainer1.Panel2.Controls.Add(rightPanel);
-            splitContainer1.Size = new Size(1000, 700);
-            splitContainer1.SplitterDistance = 644;
+            splitContainer1.Panel2.Padding = new Padding(5);
+            splitContainer1.Size = new Size(1200, 800);
+            splitContainer1.SplitterDistance = 800;
             splitContainer1.SplitterWidth = 1;
             splitContainer1.TabIndex = 0;
             // 
@@ -105,9 +112,9 @@ namespace MessengerApp
             chatPanel.Controls.Add(chatTextBox);
             chatPanel.Controls.Add(bottomPanel);
             chatPanel.Dock = DockStyle.Fill;
-            chatPanel.Location = new Point(0, 0);
+            chatPanel.Location = new Point(10, 10);
             chatPanel.Name = "chatPanel";
-            chatPanel.Size = new Size(644, 700);
+            chatPanel.Size = new Size(780, 780);
             chatPanel.TabIndex = 0;
             // 
             // chatTextBox
@@ -115,44 +122,45 @@ namespace MessengerApp
             chatTextBox.BackColor = Color.White;
             chatTextBox.BorderStyle = BorderStyle.None;
             chatTextBox.Dock = DockStyle.Fill;
-            chatTextBox.Font = new Font("Segoe UI", 10F);
+            chatTextBox.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 204);
             chatTextBox.ForeColor = Color.FromArgb(32, 32, 32);
             chatTextBox.Location = new Point(0, 0);
+            chatTextBox.Margin = new Padding(10);
             chatTextBox.Name = "chatTextBox";
             chatTextBox.ReadOnly = true;
             chatTextBox.ScrollBars = RichTextBoxScrollBars.Vertical;
-            chatTextBox.Size = new Size(644, 650);
+            chatTextBox.Size = new Size(780, 720);
             chatTextBox.TabIndex = 0;
             chatTextBox.Text = "";
             // 
             // bottomPanel
             // 
-            bottomPanel.BackColor = Color.FromArgb(240, 242, 245);
+            bottomPanel.BackColor = Color.FromArgb(250, 251, 252);
             bottomPanel.Controls.Add(bottomTableLayout);
             bottomPanel.Dock = DockStyle.Bottom;
-            bottomPanel.Location = new Point(0, 650);
+            bottomPanel.Location = new Point(0, 720);
             bottomPanel.Name = "bottomPanel";
-            bottomPanel.Padding = new Padding(10);
-            bottomPanel.Size = new Size(644, 50);
+            bottomPanel.Padding = new Padding(15);
+            bottomPanel.Size = new Size(780, 60);
             bottomPanel.TabIndex = 1;
             // 
             // bottomTableLayout
             // 
             bottomTableLayout.ColumnCount = 4;
             bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 45F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 45F));
-            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
+            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50F));
+            bottomTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
             bottomTableLayout.Controls.Add(messageTextBox, 0, 0);
             bottomTableLayout.Controls.Add(emojiButton, 1, 0);
             bottomTableLayout.Controls.Add(imageButton, 2, 0);
             bottomTableLayout.Controls.Add(sendButton, 3, 0);
             bottomTableLayout.Dock = DockStyle.Fill;
-            bottomTableLayout.Location = new Point(10, 10);
+            bottomTableLayout.Location = new Point(15, 15);
             bottomTableLayout.Name = "bottomTableLayout";
             bottomTableLayout.RowCount = 1;
             bottomTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            bottomTableLayout.Size = new Size(624, 30);
+            bottomTableLayout.Size = new Size(750, 30);
             bottomTableLayout.TabIndex = 0;
             // 
             // messageTextBox
@@ -163,25 +171,26 @@ namespace MessengerApp
             messageTextBox.Dock = DockStyle.Fill;
             messageTextBox.Font = new Font("Segoe UI", 10F);
             messageTextBox.Location = new Point(3, 3);
+            messageTextBox.Margin = new Padding(3, 3, 8, 3);
             messageTextBox.Multiline = true;
             messageTextBox.Name = "messageTextBox";
             messageTextBox.PlaceholderText = "Введите сообщение...";
-            messageTextBox.Size = new Size(428, 24);
+            messageTextBox.Size = new Size(526, 24);
             messageTextBox.TabIndex = 0;
             messageTextBox.KeyPress += messageTextBox_KeyPress;
             // 
             // emojiButton
             // 
-            emojiButton.BackColor = Color.FromArgb(0, 123, 255);
+            emojiButton.BackColor = Color.FromArgb(86, 156, 214);
             emojiButton.Dock = DockStyle.Fill;
             emojiButton.FlatAppearance.BorderSize = 0;
             emojiButton.FlatStyle = FlatStyle.Flat;
-            emojiButton.Font = new Font("Segoe UI Emoji", 10F);
+            emojiButton.Font = new Font("Segoe UI Emoji", 11F);
             emojiButton.ForeColor = Color.White;
-            emojiButton.Location = new Point(434, 2);
+            emojiButton.Location = new Point(537, 2);
             emojiButton.Margin = new Padding(0, 2, 5, 2);
             emojiButton.Name = "emojiButton";
-            emojiButton.Size = new Size(40, 26);
+            emojiButton.Size = new Size(45, 26);
             emojiButton.TabIndex = 1;
             emojiButton.Text = "😊";
             emojiButton.UseVisualStyleBackColor = false;
@@ -189,16 +198,16 @@ namespace MessengerApp
             // 
             // imageButton
             // 
-            imageButton.BackColor = Color.FromArgb(0, 123, 255);
+            imageButton.BackColor = Color.FromArgb(86, 156, 214);
             imageButton.Dock = DockStyle.Fill;
             imageButton.FlatAppearance.BorderSize = 0;
             imageButton.FlatStyle = FlatStyle.Flat;
-            imageButton.Font = new Font("Segoe UI", 10F);
+            imageButton.Font = new Font("Segoe UI", 11F);
             imageButton.ForeColor = Color.White;
-            imageButton.Location = new Point(479, 2);
+            imageButton.Location = new Point(587, 2);
             imageButton.Margin = new Padding(0, 2, 5, 2);
             imageButton.Name = "imageButton";
-            imageButton.Size = new Size(40, 26);
+            imageButton.Size = new Size(45, 26);
             imageButton.TabIndex = 2;
             imageButton.Text = "📷";
             imageButton.UseVisualStyleBackColor = false;
@@ -206,16 +215,16 @@ namespace MessengerApp
             // 
             // sendButton
             // 
-            sendButton.BackColor = Color.FromArgb(0, 123, 255);
+            sendButton.BackColor = Color.FromArgb(76, 175, 80);
             sendButton.Dock = DockStyle.Fill;
             sendButton.FlatAppearance.BorderSize = 0;
             sendButton.FlatStyle = FlatStyle.Flat;
             sendButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             sendButton.ForeColor = Color.White;
-            sendButton.Location = new Point(524, 2);
+            sendButton.Location = new Point(637, 2);
             sendButton.Margin = new Padding(0, 2, 0, 2);
             sendButton.Name = "sendButton";
-            sendButton.Size = new Size(100, 26);
+            sendButton.Size = new Size(113, 26);
             sendButton.TabIndex = 3;
             sendButton.Text = "Отправить";
             sendButton.UseVisualStyleBackColor = false;
@@ -223,44 +232,16 @@ namespace MessengerApp
             // 
             // rightPanel
             // 
-            rightPanel.BackColor = Color.FromArgb(240, 242, 245);
+            rightPanel.BackColor = Color.FromArgb(245, 247, 250);
             rightPanel.Controls.Add(userListPanel);
+            rightPanel.Controls.Add(changeNamePanel);
             rightPanel.Controls.Add(clientPanel);
-            rightPanel.Controls.Add(changeNamePanel); // Добавляем панель смены имени
             rightPanel.Controls.Add(serverPanel);
             rightPanel.Dock = DockStyle.Fill;
-            rightPanel.Location = new Point(0, 0);
+            rightPanel.Location = new Point(5, 5);
             rightPanel.Name = "rightPanel";
-            rightPanel.Padding = new Padding(10);
-            rightPanel.Size = new Size(355, 700);
+            rightPanel.Size = new Size(389, 790);
             rightPanel.TabIndex = 0;
-            // 
-            // changeNamePanel
-            // 
-            changeNamePanel.BackColor = Color.White;
-            changeNamePanel.BorderStyle = BorderStyle.FixedSingle;
-            changeNamePanel.Controls.Add(changeNameButton);
-            changeNamePanel.Dock = DockStyle.Top;
-            changeNamePanel.Location = new Point(10, 250);
-            changeNamePanel.Name = "changeNamePanel";
-            changeNamePanel.Padding = new Padding(8);
-            changeNamePanel.Size = new Size(335, 60);
-            changeNamePanel.TabIndex = 3;
-            // 
-            // changeNameButton
-            // 
-            changeNameButton.BackColor = Color.FromArgb(255, 193, 7);
-            changeNameButton.FlatAppearance.BorderSize = 0;
-            changeNameButton.FlatStyle = FlatStyle.Flat;
-            changeNameButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            changeNameButton.ForeColor = Color.Black;
-            changeNameButton.Location = new Point(8, 15);
-            changeNameButton.Name = "changeNameButton";
-            changeNameButton.Size = new Size(150, 30);
-            changeNameButton.TabIndex = 0;
-            changeNameButton.Text = "Сменить никнейм";
-            changeNameButton.UseVisualStyleBackColor = false;
-            changeNameButton.Click += changeNameButton_Click;
             // 
             // userListPanel
             // 
@@ -269,10 +250,10 @@ namespace MessengerApp
             userListPanel.Controls.Add(userListBox);
             userListPanel.Controls.Add(usersLabel);
             userListPanel.Dock = DockStyle.Fill;
-            userListPanel.Location = new Point(10, 310);
+            userListPanel.Location = new Point(0, 360);
             userListPanel.Name = "userListPanel";
-            userListPanel.Padding = new Padding(8);
-            userListPanel.Size = new Size(335, 380);
+            userListPanel.Padding = new Padding(12);
+            userListPanel.Size = new Size(389, 430);
             userListPanel.TabIndex = 0;
             // 
             // userListBox
@@ -280,23 +261,52 @@ namespace MessengerApp
             userListBox.BackColor = Color.White;
             userListBox.BorderStyle = BorderStyle.None;
             userListBox.Dock = DockStyle.Fill;
-            userListBox.Font = new Font("Segoe UI", 9F);
+            userListBox.Font = new Font("Segoe UI", 10F);
             userListBox.ForeColor = Color.FromArgb(32, 32, 32);
-            userListBox.Location = new Point(8, 30);
+            userListBox.ItemHeight = 21;
+            userListBox.Location = new Point(12, 40);
             userListBox.Name = "userListBox";
-            userListBox.Size = new Size(317, 340);
+            userListBox.Size = new Size(363, 376);
             userListBox.TabIndex = 0;
             // 
             // usersLabel
             // 
             usersLabel.Dock = DockStyle.Top;
-            usersLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            usersLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             usersLabel.ForeColor = Color.FromArgb(32, 32, 32);
-            usersLabel.Location = new Point(8, 8);
+            usersLabel.Location = new Point(12, 12);
             usersLabel.Name = "usersLabel";
-            usersLabel.Size = new Size(317, 22);
+            usersLabel.Size = new Size(363, 28);
             usersLabel.TabIndex = 1;
-            usersLabel.Text = "Пользователи онлайн:";
+            usersLabel.Text = "👥 Пользователи онлайн:";
+            // 
+            // changeNamePanel
+            // 
+            changeNamePanel.BackColor = Color.White;
+            changeNamePanel.BorderStyle = BorderStyle.FixedSingle;
+            changeNamePanel.Controls.Add(changeNameButton);
+            changeNamePanel.Dock = DockStyle.Top;
+            changeNamePanel.Location = new Point(0, 280);
+            changeNamePanel.Name = "changeNamePanel";
+            changeNamePanel.Padding = new Padding(12);
+            changeNamePanel.Size = new Size(389, 80);
+            changeNamePanel.TabIndex = 3;
+            // 
+            // changeNameButton
+            // 
+            changeNameButton.BackColor = Color.FromArgb(255, 167, 38);
+            changeNameButton.Dock = DockStyle.Fill;
+            changeNameButton.FlatAppearance.BorderSize = 0;
+            changeNameButton.FlatStyle = FlatStyle.Flat;
+            changeNameButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            changeNameButton.ForeColor = Color.White;
+            changeNameButton.Location = new Point(12, 12);
+            changeNameButton.Name = "changeNameButton";
+            changeNameButton.Size = new Size(363, 54);
+            changeNameButton.TabIndex = 0;
+            changeNameButton.Text = "✏️ Сменить никнейм";
+            changeNameButton.UseVisualStyleBackColor = false;
+            changeNameButton.Click += changeNameButton_Click;
             // 
             // clientPanel
             // 
@@ -309,29 +319,31 @@ namespace MessengerApp
             clientPanel.Controls.Add(disconnectButton);
             clientPanel.Controls.Add(statusLabel);
             clientPanel.Dock = DockStyle.Top;
-            clientPanel.Location = new Point(10, 130);
+            clientPanel.Location = new Point(0, 140);
             clientPanel.Name = "clientPanel";
-            clientPanel.Padding = new Padding(8);
-            clientPanel.Size = new Size(335, 120);
+            clientPanel.Padding = new Padding(12);
+            clientPanel.Size = new Size(389, 140);
             clientPanel.TabIndex = 1;
             // 
             // clientLabel
             // 
-            clientLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            clientLabel.Dock = DockStyle.Top;
+            clientLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             clientLabel.ForeColor = Color.FromArgb(32, 32, 32);
-            clientLabel.Location = new Point(8, 8);
+            clientLabel.Location = new Point(12, 12);
             clientLabel.Name = "clientLabel";
-            clientLabel.Size = new Size(200, 20);
+            clientLabel.Size = new Size(363, 25);
             clientLabel.TabIndex = 0;
-            clientLabel.Text = "Подключение к серверу:";
+            clientLabel.Text = "🔌 Подключение к серверу:";
             // 
             // ipLabel
             // 
+            ipLabel.AutoSize = true;
             ipLabel.Font = new Font("Segoe UI", 9F);
             ipLabel.ForeColor = Color.FromArgb(64, 64, 64);
-            ipLabel.Location = new Point(8, 35);
+            ipLabel.Location = new Point(12, 45);
             ipLabel.Name = "ipLabel";
-            ipLabel.Size = new Size(70, 20);
+            ipLabel.Size = new Size(80, 20);
             ipLabel.TabIndex = 1;
             ipLabel.Text = "IP сервера:";
             // 
@@ -341,9 +353,9 @@ namespace MessengerApp
             ipTextBox.BorderStyle = BorderStyle.FixedSingle;
             ipTextBox.Font = new Font("Segoe UI", 9F);
             ipTextBox.ForeColor = Color.FromArgb(32, 32, 32);
-            ipTextBox.Location = new Point(80, 33);
+            ipTextBox.Location = new Point(98, 43);
             ipTextBox.Name = "ipTextBox";
-            ipTextBox.Size = new Size(135, 27);
+            ipTextBox.Size = new Size(150, 27);
             ipTextBox.TabIndex = 2;
             ipTextBox.Text = "127.0.0.1";
             // 
@@ -352,13 +364,13 @@ namespace MessengerApp
             connectButton.BackColor = Color.FromArgb(76, 175, 80);
             connectButton.FlatAppearance.BorderSize = 0;
             connectButton.FlatStyle = FlatStyle.Flat;
-            connectButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            connectButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             connectButton.ForeColor = Color.White;
-            connectButton.Location = new Point(8, 65);
+            connectButton.Location = new Point(12, 80);
             connectButton.Name = "connectButton";
-            connectButton.Size = new Size(130, 25);
+            connectButton.Size = new Size(170, 35);
             connectButton.TabIndex = 3;
-            connectButton.Text = "Подключиться";
+            connectButton.Text = "✅ Подключиться";
             connectButton.UseVisualStyleBackColor = false;
             connectButton.Click += connectButton_Click;
             // 
@@ -368,25 +380,25 @@ namespace MessengerApp
             disconnectButton.Enabled = false;
             disconnectButton.FlatAppearance.BorderSize = 0;
             disconnectButton.FlatStyle = FlatStyle.Flat;
-            disconnectButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            disconnectButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             disconnectButton.ForeColor = Color.White;
-            disconnectButton.Location = new Point(144, 65);
+            disconnectButton.Location = new Point(188, 80);
             disconnectButton.Name = "disconnectButton";
-            disconnectButton.Size = new Size(115, 25);
+            disconnectButton.Size = new Size(170, 35);
             disconnectButton.TabIndex = 4;
-            disconnectButton.Text = "Отключиться";
+            disconnectButton.Text = "❌ Отключиться";
             disconnectButton.UseVisualStyleBackColor = false;
             disconnectButton.Click += disconnectButton_Click;
             // 
             // statusLabel
             // 
-            statusLabel.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            statusLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             statusLabel.ForeColor = Color.Red;
-            statusLabel.Location = new Point(8, 95);
+            statusLabel.Location = new Point(12, 120);
             statusLabel.Name = "statusLabel";
-            statusLabel.Size = new Size(200, 20);
+            statusLabel.Size = new Size(350, 20);
             statusLabel.TabIndex = 5;
-            statusLabel.Text = "Не подключено";
+            statusLabel.Text = "❌ Не подключено";
             // 
             // serverPanel
             // 
@@ -397,69 +409,70 @@ namespace MessengerApp
             serverPanel.Controls.Add(stopServerButton);
             serverPanel.Controls.Add(serverInfoLabel);
             serverPanel.Dock = DockStyle.Top;
-            serverPanel.Location = new Point(10, 10);
+            serverPanel.Location = new Point(0, 0);
             serverPanel.Name = "serverPanel";
-            serverPanel.Padding = new Padding(8);
-            serverPanel.Size = new Size(335, 120);
+            serverPanel.Padding = new Padding(12);
+            serverPanel.Size = new Size(389, 140);
             serverPanel.TabIndex = 2;
             // 
             // serverLabel
             // 
-            serverLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            serverLabel.Dock = DockStyle.Top;
+            serverLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             serverLabel.ForeColor = Color.FromArgb(32, 32, 32);
-            serverLabel.Location = new Point(8, 8);
+            serverLabel.Location = new Point(12, 12);
             serverLabel.Name = "serverLabel";
-            serverLabel.Size = new Size(150, 20);
+            serverLabel.Size = new Size(363, 25);
             serverLabel.TabIndex = 0;
-            serverLabel.Text = "Управление сервером:";
+            serverLabel.Text = "🖥️ Управление сервером:";
             // 
             // startServerButton
             // 
-            startServerButton.BackColor = Color.FromArgb(0, 123, 255);
+            startServerButton.BackColor = Color.FromArgb(33, 150, 243);
             startServerButton.FlatAppearance.BorderSize = 0;
             startServerButton.FlatStyle = FlatStyle.Flat;
-            startServerButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            startServerButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             startServerButton.ForeColor = Color.White;
-            startServerButton.Location = new Point(8, 35);
+            startServerButton.Location = new Point(12, 45);
             startServerButton.Name = "startServerButton";
-            startServerButton.Size = new Size(100, 30);
+            startServerButton.Size = new Size(170, 35);
             startServerButton.TabIndex = 1;
-            startServerButton.Text = "Запустить сервер";
+            startServerButton.Text = "🚀 Запустить сервер";
             startServerButton.UseVisualStyleBackColor = false;
             startServerButton.Click += startServerButton_Click;
             // 
             // stopServerButton
             // 
-            stopServerButton.BackColor = Color.FromArgb(108, 117, 125);
+            stopServerButton.BackColor = Color.FromArgb(158, 158, 158);
             stopServerButton.Enabled = false;
             stopServerButton.FlatAppearance.BorderSize = 0;
             stopServerButton.FlatStyle = FlatStyle.Flat;
-            stopServerButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            stopServerButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             stopServerButton.ForeColor = Color.White;
-            stopServerButton.Location = new Point(115, 35);
+            stopServerButton.Location = new Point(188, 45);
             stopServerButton.Name = "stopServerButton";
-            stopServerButton.Size = new Size(100, 30);
+            stopServerButton.Size = new Size(170, 35);
             stopServerButton.TabIndex = 2;
-            stopServerButton.Text = "Остановить сервер";
+            stopServerButton.Text = "🛑 Остановить сервер";
             stopServerButton.UseVisualStyleBackColor = false;
             stopServerButton.Click += stopServerButton_Click;
             // 
             // serverInfoLabel
             // 
-            serverInfoLabel.Font = new Font("Segoe UI", 8F);
+            serverInfoLabel.Font = new Font("Segoe UI", 9F);
             serverInfoLabel.ForeColor = Color.FromArgb(64, 64, 64);
-            serverInfoLabel.Location = new Point(8, 75);
+            serverInfoLabel.Location = new Point(12, 90);
             serverInfoLabel.Name = "serverInfoLabel";
-            serverInfoLabel.Size = new Size(210, 35);
+            serverInfoLabel.Size = new Size(350, 40);
             serverInfoLabel.TabIndex = 3;
-            serverInfoLabel.Text = "Ваш IP: загрузка...";
+            serverInfoLabel.Text = "🌐 Ваш IP: загрузка...";
             // 
             // MainForm
             // 
             BackColor = Color.White;
-            ClientSize = new Size(1000, 700);
+            ClientSize = new Size(1200, 800);
             Controls.Add(splitContainer1);
-            MinimumSize = new Size(800, 600);
+            MinimumSize = new Size(1000, 700);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Messenger App";
@@ -472,18 +485,12 @@ namespace MessengerApp
             bottomTableLayout.ResumeLayout(false);
             bottomTableLayout.PerformLayout();
             rightPanel.ResumeLayout(false);
-            changeNamePanel.ResumeLayout(false);
             userListPanel.ResumeLayout(false);
+            changeNamePanel.ResumeLayout(false);
             clientPanel.ResumeLayout(false);
             clientPanel.PerformLayout();
             serverPanel.ResumeLayout(false);
             ResumeLayout(false);
         }
-        private Panel chatPanel;
-        private Panel rightPanel;
-        private Panel userListPanel;
-        private Label usersLabel;
-        private Label clientLabel;
-        private Label serverLabel;
     }
 }

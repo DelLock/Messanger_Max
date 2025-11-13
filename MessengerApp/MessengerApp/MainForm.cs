@@ -1,4 +1,3 @@
-﻿
 ﻿using System;
 using System.Drawing;
 using System.IO;
@@ -10,16 +9,19 @@ using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Drawing.Drawing2D;
 
 namespace MessengerApp
 {
     public partial class MainForm : Form
     {
+        // Серверные компоненты
         private TcpListener server;
         private Thread serverThread;
         private bool isServerRunning = false;
         private List<TcpClient> connectedClients = new List<TcpClient>();
 
+        // Клиентские компоненты  
         private TcpClient client;
         private NetworkStream clientStream;
         private Thread clientThread;
@@ -28,43 +30,123 @@ namespace MessengerApp
         private string currentUser;
         private bool isFormReady = false;
 
+        // Словарь для хранения соответствия TCP-клиентов и их имен пользователей
         private Dictionary<TcpClient, string> clientUsernames = new Dictionary<TcpClient, string>();
 
         public MainForm()
         {
             InitializeComponent();
 
+            // Показываем диалог ввода имени при запуске
             ShowUsernameDialog();
 
             Text = $"Messenger - {currentUser}";
 
+            // Ждем полной загрузки формы перед вызовами Invoke
             this.Load += (s, e) => {
                 isFormReady = true;
                 UpdateStatus("Не подключено");
                 serverInfoLabel.Text = "Ваш IP: " + GetLocalIPAddress();
 
+                // Применяем закругление ко всем кнопкам
+                ApplyRoundedButtons();
+
+                // Автоматически подстраиваем размеры после загрузки
                 AdjustLayout();
             };
 
+            // Также обрабатываем изменение размера окна
             this.Resize += (s, e) => AdjustLayout();
         }
+
+        // Метод для применения закругления ко всем кнопкам
+        private void ApplyRoundedButtons()
+        {
+            ApplyRoundedButton(sendButton, 12);
+            ApplyRoundedButton(emojiButton, 8);
+            ApplyRoundedButton(imageButton, 8);
+            ApplyRoundedButton(connectButton, 10);
+            ApplyRoundedButton(disconnectButton, 10);
+            ApplyRoundedButton(startServerButton, 10);
+            ApplyRoundedButton(stopServerButton, 10);
+            ApplyRoundedButton(changeNameButton, 10);
+        }
+
+        // Метод для создания закругленных кнопок
+        private void ApplyRoundedButton(Button button, int cornerRadius)
+        {
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 0;
+            button.BackColor = button.BackColor; // Сохраняем исходный цвет
+            button.ForeColor = Color.White;
+
+            // Создаем закругленную область
+            GraphicsPath path = new GraphicsPath();
+            path.AddArc(0, 0, cornerRadius, cornerRadius, 180, 90);
+            path.AddArc(button.Width - cornerRadius, 0, cornerRadius, cornerRadius, 270, 90);
+            path.AddArc(button.Width - cornerRadius, button.Height - cornerRadius, cornerRadius, cornerRadius, 0, 90);
+            path.AddArc(0, button.Height - cornerRadius, cornerRadius, cornerRadius, 90, 90);
+            path.CloseAllFigures();
+
+            button.Region = new Region(path);
+        }
+
+        // Метод для показа диалога ввода имени пользователя
         private void ShowUsernameDialog()
         {
             using (var dialog = new Form())
             {
                 dialog.Text = "Введите ваш никнейм";
-                dialog.Width = 300;
-                dialog.Height = 150;
+                dialog.Width = 350;
+                dialog.Height = 180;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
                 dialog.StartPosition = FormStartPosition.CenterScreen;
                 dialog.MaximizeBox = false;
                 dialog.MinimizeBox = false;
+                dialog.BackColor = Color.White;
+                dialog.Padding = new Padding(20);
 
-                var label = new Label() { Left = 20, Top = 20, Text = "Никнейм:", Width = 100 };
-                var textBox = new TextBox() { Left = 20, Top = 45, Width = 240, Text = "User_" + new Random().Next(1000, 9999) };
-                var button = new Button() { Text = "OK", Left = 160, Top = 75, Width = 100, DialogResult = DialogResult.OK };
+                var label = new Label()
+                {
+                    Left = 20,
+                    Top = 20,
+                    Text = "Никнейм:",
+                    Width = 100,
+                    Font = new Font("Segoe UI", 10F)
+                };
+
+                var textBox = new TextBox()
+                {
+                    Left = 20,
+                    Top = 50,
+                    Width = 290,
+                    Font = new Font("Segoe UI", 10F),
+                    Text = "User_" + new Random().Next(1000, 9999)
+                };
+
+                var button = new Button()
+                {
+                    Text = "Продолжить",
+                    Left = 190,
+                    Top = 90,
+                    Width = 120,
+                    Height = 35,
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                    BackColor = Color.FromArgb(76, 175, 80),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat
+                };
 
                 button.Click += (sender, e) => { dialog.Close(); };
+
+                // Применяем закругление к кнопке диалога
+                GraphicsPath path = new GraphicsPath();
+                path.AddArc(0, 0, 10, 10, 180, 90);
+                path.AddArc(button.Width - 10, 0, 10, 10, 270, 90);
+                path.AddArc(button.Width - 10, button.Height - 10, 10, 10, 0, 90);
+                path.AddArc(0, button.Height - 10, 10, 10, 90, 90);
+                path.CloseAllFigures();
+                button.Region = new Region(path);
 
                 dialog.Controls.Add(label);
                 dialog.Controls.Add(textBox);
@@ -82,11 +164,21 @@ namespace MessengerApp
                 }
             }
         }
+
+        // Метод для смены никнейма
         private void ChangeUsername(string newUsername)
         {
             if (string.IsNullOrWhiteSpace(newUsername))
             {
-                MessageBox.Show("Никнейм не может быть пустым!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Никнейм не может быть пустым!", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (newUsername.Length > 20)
+            {
+                MessageBox.Show("Никнейм не может быть длиннее 20 символов!", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -94,8 +186,10 @@ namespace MessengerApp
             currentUser = newUsername.Trim();
             Text = $"Messenger - {currentUser}";
 
+            // Обновляем список пользователей
             UpdateUserList();
 
+            // Отправляем сообщение о смене имени другим пользователям
             var renameMessage = new ChatMessage
             {
                 Sender = oldUsername,
@@ -108,22 +202,71 @@ namespace MessengerApp
             SendMessageToAll(renameMessage);
             AddSystemMessage($"Вы сменили имя на {currentUser}");
         }
+
+        // Обработчик кнопки смены никнейма
         private void changeNameButton_Click(object sender, EventArgs e)
         {
             using (var dialog = new Form())
             {
                 dialog.Text = "Сменить никнейм";
-                dialog.Width = 300;
-                dialog.Height = 150;
+                dialog.Width = 350;
+                dialog.Height = 180;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.MaximizeBox = false;
                 dialog.MinimizeBox = false;
+                dialog.BackColor = Color.White;
+                dialog.Padding = new Padding(20);
 
-                var label = new Label() { Left = 20, Top = 20, Text = "Новый никнейм:", Width = 100 };
-                var textBox = new TextBox() { Left = 20, Top = 45, Width = 240, Text = currentUser };
-                var okButton = new Button() { Text = "OK", Left = 160, Top = 75, Width = 60, DialogResult = DialogResult.OK };
-                var cancelButton = new Button() { Text = "Отмена", Left = 85, Top = 75, Width = 60, DialogResult = DialogResult.Cancel };
+                var label = new Label()
+                {
+                    Left = 20,
+                    Top = 20,
+                    Text = "Новый никнейм:",
+                    Width = 130,
+                    Font = new Font("Segoe UI", 10F)
+                };
+
+                var textBox = new TextBox()
+                {
+                    Left = 20,
+                    Top = 50,
+                    Width = 290,
+                    Font = new Font("Segoe UI", 10F),
+                    Text = currentUser
+                };
+
+                var okButton = new Button()
+                {
+                    Text = "Сменить",
+                    Left = 190,
+                    Top = 90,
+                    Width = 120,
+                    Height = 35,
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                    BackColor = Color.FromArgb(255, 167, 38),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    DialogResult = DialogResult.OK
+                };
+
+                var cancelButton = new Button()
+                {
+                    Text = "Отмена",
+                    Left = 60,
+                    Top = 90,
+                    Width = 120,
+                    Height = 35,
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                    BackColor = Color.FromArgb(158, 158, 158),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    DialogResult = DialogResult.Cancel
+                };
+
+                // Применяем закругление к кнопкам диалога
+                ApplyRoundedButtonToDialog(okButton, 10);
+                ApplyRoundedButtonToDialog(cancelButton, 10);
 
                 okButton.Click += (s, e) => { dialog.Close(); };
                 cancelButton.Click += (s, e) => { dialog.Close(); };
@@ -141,6 +284,23 @@ namespace MessengerApp
                 }
             }
         }
+
+        private void ApplyRoundedButtonToDialog(Button button, int cornerRadius)
+        {
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 0;
+
+            GraphicsPath path = new GraphicsPath();
+            path.AddArc(0, 0, cornerRadius, cornerRadius, 180, 90);
+            path.AddArc(button.Width - cornerRadius, 0, cornerRadius, cornerRadius, 270, 90);
+            path.AddArc(button.Width - cornerRadius, button.Height - cornerRadius, cornerRadius, cornerRadius, 0, 90);
+            path.AddArc(0, button.Height - cornerRadius, cornerRadius, cornerRadius, 90, 90);
+            path.CloseAllFigures();
+
+            button.Region = new Region(path);
+        }
+
+        // === БЕЗОПАСНЫЕ ВЫЗОВЫ ДЛЯ UI ===
         private void SafeInvoke(Action action)
         {
             if (IsDisposed || !isFormReady) return;
@@ -190,9 +350,12 @@ namespace MessengerApp
             {
                 if (statusLabel != null && !statusLabel.IsDisposed)
                 {
-                    statusLabel.Text = status;
+                    statusLabel.Text = status.Contains("Не подключено") ? "❌ " + status :
+                                     status.Contains("Подключено") ? "✅ " + status :
+                                     status.Contains("Ошибка") ? "⚠️ " + status : status;
+
                     statusLabel.ForeColor = status.Contains("Ошибка") ? Color.Red :
-                                          status.Contains("Подключено") ? Color.Green : Color.Black;
+                                          status.Contains("Подключено") ? Color.Green : Color.Red;
                 }
             });
         }
@@ -217,6 +380,8 @@ namespace MessengerApp
                 }
             });
         }
+
+        // === СЕТЕВАЯ ИНФОРМАЦИЯ ===
         private string GetNetworkInfo()
         {
             string result = "Сетевые интерфейсы:\n";
@@ -271,6 +436,7 @@ namespace MessengerApp
             return "127.0.0.1";
         }
 
+        // === СЕРВЕРНАЯ ЧАСТЬ ===
         private void StartServer()
         {
             try
@@ -285,11 +451,15 @@ namespace MessengerApp
                 string networkInfo = GetNetworkInfo();
 
                 UpdateStatus($"Сервер запущен на порту {port}");
-                AddSystemMessage($"Сервер запущен!\n{networkInfo}");
+                AddSystemMessage($"✅ Сервер запущен!\n{networkInfo}");
 
                 SafeInvoke(() => {
-                    if (startServerButton != null) startServerButton.Enabled = false;
-                    if (stopServerButton != null) stopServerButton.Enabled = true;
+                    startServerButton.Enabled = false;
+                    stopServerButton.Enabled = true;
+                    startServerButton.BackColor = Color.FromArgb(158, 158, 158);
+                    stopServerButton.BackColor = Color.FromArgb(244, 67, 54);
+                    ApplyRoundedButton(startServerButton, 10);
+                    ApplyRoundedButton(stopServerButton, 10);
                 });
             }
             catch (Exception ex)
@@ -318,12 +488,16 @@ namespace MessengerApp
             try { server?.Stop(); } catch { }
 
             SafeInvoke(() => {
-                if (startServerButton != null) startServerButton.Enabled = true;
-                if (stopServerButton != null) stopServerButton.Enabled = false;
+                startServerButton.Enabled = true;
+                stopServerButton.Enabled = false;
+                startServerButton.BackColor = Color.FromArgb(33, 150, 243);
+                stopServerButton.BackColor = Color.FromArgb(158, 158, 158);
+                ApplyRoundedButton(startServerButton, 10);
+                ApplyRoundedButton(stopServerButton, 10);
             });
 
             UpdateStatus("Сервер остановлен");
-            AddSystemMessage("Сервер остановлен");
+            AddSystemMessage("🛑 Сервер остановлен");
         }
 
         private void ListenForClients()
@@ -345,7 +519,7 @@ namespace MessengerApp
                 catch (Exception ex)
                 {
                     if (isServerRunning)
-                        AddSystemMessage($"Ошибка принятия подключения: {ex.Message}");
+                        AddSystemMessage($"⚠️ Ошибка принятия подключения: {ex.Message}");
                     break;
                 }
             }
@@ -371,10 +545,9 @@ namespace MessengerApp
                     clientUsernames[tcpClient] = clientUser;
                 }
 
-                AddSystemMessage($"{clientUser} подключился");
+                AddSystemMessage($"✅ {clientUser} подключился");
 
                 SendUserList(tcpClient);
-
                 BroadcastUserJoin(clientUser);
 
                 while (tcpClient.Connected && isServerRunning)
@@ -388,7 +561,7 @@ namespace MessengerApp
             }
             catch (Exception ex)
             {
-                AddSystemMessage($"Ошибка обработки клиента {clientUser}: {ex.Message}");
+                AddSystemMessage($"⚠️ Ошибка обработки клиента {clientUser}: {ex.Message}");
             }
             finally
             {
@@ -404,7 +577,7 @@ namespace MessengerApp
 
                 if (!string.IsNullOrEmpty(clientUser))
                 {
-                    AddSystemMessage($"{clientUser} отключился");
+                    AddSystemMessage($"❌ {clientUser} отключился");
                     BroadcastUserLeave(clientUser);
                 }
             }
@@ -430,7 +603,7 @@ namespace MessengerApp
             }
             catch (Exception ex)
             {
-                AddSystemMessage($"Ошибка отправки списка пользователей: {ex.Message}");
+                AddSystemMessage($"⚠️ Ошибка отправки списка пользователей: {ex.Message}");
             }
         }
 
@@ -495,6 +668,7 @@ namespace MessengerApp
             }
         }
 
+        // === КЛИЕНТСКАЯ ЧАСТЬ ===
         private void ConnectToServer(string ipAddress)
         {
             try
@@ -514,19 +688,23 @@ namespace MessengerApp
                 clientThread.IsBackground = true;
                 clientThread.Start();
 
-                UpdateStatus($"Подключено к {ipAddress}");
-                AddSystemMessage($"Успешно подключено к серверу {ipAddress}");
+                UpdateStatus($"✅ Подключено к {ipAddress}");
+                AddSystemMessage($"✅ Успешно подключено к серверу {ipAddress}");
 
                 SafeInvoke(() => {
-                    if (connectButton != null) connectButton.Enabled = false;
-                    if (disconnectButton != null) disconnectButton.Enabled = true;
-                    if (ipTextBox != null) ipTextBox.Enabled = false;
+                    connectButton.Enabled = false;
+                    disconnectButton.Enabled = true;
+                    ipTextBox.Enabled = false;
+                    connectButton.BackColor = Color.FromArgb(158, 158, 158);
+                    disconnectButton.BackColor = Color.FromArgb(244, 67, 54);
+                    ApplyRoundedButton(connectButton, 10);
+                    ApplyRoundedButton(disconnectButton, 10);
                 });
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка подключения: {ex.Message}");
-                UpdateStatus("Ошибка подключения");
+                UpdateStatus("❌ Ошибка подключения");
             }
         }
 
@@ -538,13 +716,17 @@ namespace MessengerApp
             }
             catch { }
 
-            UpdateStatus("Отключено");
-            AddSystemMessage("Отключено от сервера");
+            UpdateStatus("❌ Отключено");
+            AddSystemMessage("❌ Отключено от сервера");
 
             SafeInvoke(() => {
-                if (connectButton != null) connectButton.Enabled = true;
-                if (disconnectButton != null) disconnectButton.Enabled = false;
-                if (ipTextBox != null) ipTextBox.Enabled = true;
+                connectButton.Enabled = true;
+                disconnectButton.Enabled = false;
+                ipTextBox.Enabled = true;
+                connectButton.BackColor = Color.FromArgb(76, 175, 80);
+                disconnectButton.BackColor = Color.FromArgb(158, 158, 158);
+                ApplyRoundedButton(connectButton, 10);
+                ApplyRoundedButton(disconnectButton, 10);
             });
         }
 
@@ -566,7 +748,7 @@ namespace MessengerApp
                 {
                     if (client != null && client.Connected)
                     {
-                        AddSystemMessage($"Ошибка получения сообщения: {ex.Message}");
+                        AddSystemMessage($"⚠️ Ошибка получения сообщения: {ex.Message}");
                     }
                     break;
                 }
@@ -596,7 +778,7 @@ namespace MessengerApp
                         AddSystemMessage($"{chatMessage.Sender} {chatMessage.Text}");
                         break;
                     case MessageType.UserConnect:
-                        AddSystemMessage($"{chatMessage.Sender} подключился к чату");
+                        AddSystemMessage($"✅ {chatMessage.Sender} подключился к чату");
                         break;
                     case MessageType.UserRename:
                         if (sourceClient != null)
@@ -608,17 +790,15 @@ namespace MessengerApp
                                     clientUsernames[sourceClient] = chatMessage.NewUsername;
                                 }
                             }
-
                             BroadcastUserList();
                         }
-
-                        AddSystemMessage($"{chatMessage.OldUsername} сменил имя на {chatMessage.NewUsername}");
+                        AddSystemMessage($"✏️ {chatMessage.OldUsername} сменил имя на {chatMessage.NewUsername}");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                AddSystemMessage($"Ошибка обработки сообщения: {ex.Message}");
+                AddSystemMessage($"⚠️ Ошибка обработки сообщения: {ex.Message}");
             }
         }
 
@@ -646,7 +826,7 @@ namespace MessengerApp
                 chatTextBox.SelectionStart = chatTextBox.TextLength;
                 chatTextBox.SelectionColor = Color.Blue;
                 chatTextBox.AppendText(infoMessage + Environment.NewLine);
-                chatTextBox.AppendText($"[Изображение, размер: {imageData?.Length ?? 0} байт]" + Environment.NewLine);
+                chatTextBox.AppendText($"[🖼️ Изображение, размер: {imageData?.Length ?? 0} байт]" + Environment.NewLine);
             });
         }
 
@@ -670,11 +850,8 @@ namespace MessengerApp
             AddMessage(currentUser, text, Color.DarkGreen);
 
             SafeInvoke(() => {
-                if (messageTextBox != null)
-                {
-                    messageTextBox.Clear();
-                    messageTextBox.Focus();
-                }
+                messageTextBox.Clear();
+                messageTextBox.Focus();
             });
         }
 
@@ -690,7 +867,7 @@ namespace MessengerApp
             }
             else
             {
-                AddSystemMessage("Нет подключения к серверу");
+                AddSystemMessage("❌ Нет подключения к серверу");
             }
         }
 
@@ -700,11 +877,12 @@ namespace MessengerApp
 
             SafeInvoke(() =>
             {
-                int rightPanelWidth = Math.Max(250, this.Width / 4);
+                int rightPanelWidth = Math.Max(300, this.Width / 4);
                 splitContainer1.SplitterDistance = this.Width - rightPanelWidth - splitContainer1.SplitterWidth;
             });
         }
 
+        // === ОБРАБОТЧИКИ СОБЫТИЙ ===
         private void sendButton_Click(object sender, EventArgs e)
         {
             SendMessage();
@@ -778,7 +956,7 @@ namespace MessengerApp
         private void emojiButton_Click(object sender, EventArgs e)
         {
             ContextMenuStrip emojiMenu = new ContextMenuStrip();
-            string[] emojis = { "😊", "😂", "🤔", "👍", "❤️", "🔥", "🎉", "🙏" };
+            string[] emojis = { "😊", "😂", "🤔", "👍", "❤️", "🔥", "🎉", "🙏", "😍", "🥳", "😎", "🤯" };
 
             foreach (string emoji in emojis)
             {
